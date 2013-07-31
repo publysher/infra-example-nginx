@@ -13,8 +13,10 @@ Vagrant.configure("2") do |config|
   # Mount salt roots, so we can do masterless setup
   config.vm.synced_folder 'salt/roots/', '/srv/'
 
-  # Forward 8080 to nginx
-  config.vm.network :forwarded_port, guest: 80, host: 8080
+  # Create a host-managed private network
+  config.hostmanager.enabled = false    # use 'sudo vagrant hostmanager' to update your local hostfile
+  config.hostmanager.manage_host = true
+  config.vm.network :private_network, ip: '10.1.14.100'
 
   # VM-specific digital ocean config
   config.vm.provider :digital_ocean do |provider|
