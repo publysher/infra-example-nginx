@@ -14,10 +14,12 @@ Vagrant.configure("2") do |config|
   config.hostmanager.include_offline = true
 
   # VM-specific digital ocean config
-  config.vm.provider :digital_ocean do |provider|
+  config.vm.provider :digital_ocean do |provider, override|
     provider.image = 'Debian 7.0 x64'
     provider.region = 'New York 1'
     provider.size = '512MB'
+
+    override.hostmanager.ignore_private_ip = true
   end
 
   # General provisioning #1: install salt minion
@@ -27,9 +29,9 @@ Vagrant.configure("2") do |config|
   # General provisioning #2: update host file
   config.vm.provision :hostmanager
 
-  # Specific options for NGINX01
+  # NGINX01 is a web server minion
   config.vm.define :nginx01 do |node|
-    node.vm.hostname = 'nginx01.intranet'
+    node.vm.hostname = 'nginx01'
     node.vm.network :private_network, ip: '10.1.14.100'
     node.vm.synced_folder 'salt/roots/', '/srv/'
 
