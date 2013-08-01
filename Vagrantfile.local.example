@@ -1,0 +1,12 @@
+# Copy this file to ~/.vagrant.d/ and update the settings
+Vagrant.configure("2") do |config|
+
+  config.vm.provider :digital_ocean do |provider, override|
+    override.vm.box_url = "https://github.com/smdahlen/vagrant-digitalocean/raw/master/box/digital_ocean.box"
+    override.ssh.private_key_path = '~/.ssh/id_dsa'     # probably this
+
+    provider.client_id = "SUPERSECRET"                  # definitely this
+    provider.api_key = "SUPERSUPERSECRET"               # and this
+  end
+
+end
