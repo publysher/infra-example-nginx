@@ -1,0 +1,3 @@
+[submodule "lib/salt-bootstrap"]
+	path = lib/salt-bootstrap
+	url = git@github.com:saltstack/salt-bootstrap.git
