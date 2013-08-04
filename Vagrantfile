@@ -22,24 +22,22 @@ Vagrant.configure("2") do |config|
     override.hostmanager.ignore_private_ip = true
   end
 
-  # General provisioning #1: install salt minion
-  config.vm.provision :shell,
-    :inline => 'wget -q -O - http://bootstrap.saltstack.org | sudo sh'
-
-  # General provisioning #2: update host file
+  # General provisioning #1: update host file
   config.vm.provision :hostmanager
+
+  # General provisioning #2: run Salt
+  config.vm.provision :salt do |salt|
+    salt.minion_config = 'salt/standalone-minion'
+    salt.bootstrap_script = 'lib/salt-bootstrap/bootstrap-salt.sh'
+    salt.run_highstate = true
+    salt.verbose = true
+  end
 
   # NGINX01 is a web server minion
   config.vm.define :nginx01 do |node|
-    node.vm.hostname = 'nginx01'
+    node.vm.hostname = 'nginx01.intranet'
     node.vm.network :private_network, ip: '10.1.14.100'
     node.vm.synced_folder 'salt/roots/', '/srv/'
-
-    node.vm.provision :salt do |salt|
-      salt.minion_config = 'salt/minion'
-      salt.run_highstate = true
-      salt.verbose = true
-    end
   end
 
 end
