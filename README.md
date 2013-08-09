@@ -1,7 +1,7 @@
 infra-example-nginx
 ===================
 
-Companion repository for my blog post [Infra as a Repo - Using Vagrant and Salt Stack to deploy Nginx on DigitalOcean](http://blog.publysher.nl/2013/07/infra-as-repo-using-vagrant-and-salt.html)
+Companion repository for my blog post series [Infra as a Repo](http://blog.publysher.nl/search/label/infra-as-a-repo).
 
 Requirements
 ------------
@@ -9,8 +9,13 @@ Requirements
 * [Vagrant](http://vagrantup.com)
 * [vagrant-hostmanager](https://github.com/smdahlen/vagrant-hostmanager)
 * [vagrant-digitalocean](https://github.com/smdahlen/vagrant-digitalocean)
+* [salty-vagrant](https://github.com/saltstack/salty-vagrant) *from source*
 
 If you want to deploy to a VPS as well, a [Digital Ocean](http://www.digitalocean.com) account is needed as well.
+
+Please note that the latest released vagrant-salt-plugin is terribly outdated. Use the
+[Installing from Source](https://github.com/saltstack/salty-vagrant#installing-from-source) instructions to install
+salty-vagrant.
 
 Create a local server
 ---------------------
