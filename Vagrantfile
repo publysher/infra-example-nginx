@@ -2,7 +2,12 @@
 # vi: set ft=ruby :
 
 # A Happy Hack to set hostmanager aliases and override them on a provider-specific basis
-def set_host_aliases(node, aliases)
+def set_network(node, ip, names)
+  node.vm.network :private_network, ip: ip
+
+  primary, *aliases = *names
+
+  node.vm.hostname = primary
   node.hostmanager.aliases = aliases
   node.hostmanager.ignore_private_ip = false
 
@@ -21,7 +26,6 @@ Vagrant.configure("2") do |config|
 
   # Create a host-managed private network
   config.hostmanager.enabled = false
-  config.hostmanager.manage_host = false
   config.hostmanager.include_offline = true
 
   # VM-specific digital ocean config
@@ -34,34 +38,45 @@ Vagrant.configure("2") do |config|
   # General provisioning #1: update host file
   config.vm.provision :hostmanager
 
-  # General provisioning #2: run Salt
-  config.vm.provision :salt do |salt|
-    salt.bootstrap_script = 'lib/salt-bootstrap/bootstrap-salt.sh'
+  # SALT is the salt master
+  config.vm.define :salt do |node|
+    set_network(node, '10.1.14.50', %w(salt.intranet salt))
+    node.vm.synced_folder 'salt/roots/', '/srv/'
 
-    salt.install_master = true
-    salt.run_highstate = false
+    # Salt-master provisioning
+    node.vm.provision :salt do |salt|
+      salt.bootstrap_script = 'lib/salt-bootstrap/bootstrap-salt.sh'
 
-    salt.minion_key = 'build/keys/nginx01.intranet.pem'
-    salt.minion_pub = 'build/keys/nginx01.intranet.pub'
+      salt.install_master = true
+      salt.run_highstate = false
 
-    salt.master_key = 'build/keys/master.pem'
-    salt.master_pub = 'build/keys/master.pub'
+      salt.minion_key = 'build/keys/salt.intranet.pem'
+      salt.minion_pub = 'build/keys/salt.intranet.pub'
 
-    salt.seed_master = {
-        'nginx01.intranet' => 'build/keys/nginx01.intranet.pub'
-    }
+      salt.master_key = 'build/keys/master.pem'
+      salt.master_pub = 'build/keys/master.pub'
+
+      salt.seed_master = {
+          'salt.intranet' => 'build/keys/salt.intranet.pub',
+          'nginx01.intranet' => 'build/keys/nginx01.intranet.pub'
+      }
+    end
+
+    # And explicitly call the highstate on this one
+    node.vm.provision :shell, :inline => 'sleep 60; salt-call state.highstate'
   end
 
   # NGINX01 is a web server
   config.vm.define :nginx01 do |node|
+    set_network(node, '10.1.14.100', %w(nginx01.intranet nginx01))
 
-    node.vm.hostname = 'nginx01.intranet'
-    node.vm.network :private_network, ip: '10.1.14.100'
-    node.vm.synced_folder 'salt/roots/', '/srv/'
-
-    set_host_aliases(node, %w(salt salt.intranet))
-
-    node.vm.provision :shell, :inline => 'sleep 60; salt-call state.highstate'
+    # Salt-minion provisioning
+    node.vm.provision :salt do |salt|
+      salt.bootstrap_script = 'lib/salt-bootstrap/bootstrap-salt.sh'
+      salt.run_highstate = true
+      salt.minion_key = 'build/keys/nginx01.intranet.pem'
+      salt.minion_pub = 'build/keys/nginx01.intranet.pub'
+    end
 
   end
 
