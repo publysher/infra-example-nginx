@@ -10,7 +10,8 @@ clean:
 
 .PHONY:	keys
 keys:	$(KEYDIR)/master.pub \
-	$(KEYDIR)/nginx01.intranet.pub
+	$(KEYDIR)/nginx01.intranet.pub \
+	$(KEYDIR)/salt.intranet.pub 
 
 
 %.pub:	%.pem
