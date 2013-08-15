@@ -28,6 +28,9 @@ Vagrant.configure("2") do |config|
   config.hostmanager.enabled = false
   config.hostmanager.include_offline = true
 
+  # DO NOT SHARE OUR ENTIRE PROJECT DIRECTORY
+  config.vm.synced_folder 'shared/', '/vagrant/'
+
   # VM-specific digital ocean config
   config.vm.provider :digital_ocean do |provider|
     provider.image = 'Debian 7.0 x64'
