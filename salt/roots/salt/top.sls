@@ -1,5 +1,6 @@
 base:
   '*':
+    - sshd_config
     - firewall
 
   'salt.intranet':

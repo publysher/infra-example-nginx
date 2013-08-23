@@ -41,6 +41,10 @@ Vagrant.configure("2") do |config|
   # General provisioning #1: update host file
   config.vm.provision :hostmanager
 
+  # Install extra salt requirements
+  config.vm.provision :shell, :inline => 'apt-get -y update'
+  config.vm.provision :shell, :inline => 'apt-get -y install libpython2.7 python-augeas'
+
   # SALT is the salt master
   config.vm.define :salt do |node|
     set_network(node, '10.1.14.50', %w(salt.intranet salt))
