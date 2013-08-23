@@ -1,7 +1,6 @@
 ufw-nginx:
-  cmd.run:
-    - name: ufw allow 'WWW Full'
+  ufw.allowed:
+    - protocol: tcp
+    - port: http,https
     - require:
       - pkg: ufw
-    - watch_in:
-      - service: ufw

@@ -1,23 +1,19 @@
+fail2ban:
+  pkg:
+    - latest
+
 ufw:
   pkg:
     - installed
-  service:
-    - running
-    - require:
-       - cmd.run: ufw-enable
-
-# Enable
-ufw-enable:
-  cmd.run:
-    - name: ufw enable
+  ufw.enabled:
     - require:
       - pkg: ufw
 
-# SSH
+
 ufw-ssh:
-  cmd.run:
-    - name: ufw allow SSH
+  ufw.allowed:
+    - protocol: tcp
+    - to_port: ssh
     - require:
       - pkg: ufw
-    - watch_in:
-      - service: ufw
+
