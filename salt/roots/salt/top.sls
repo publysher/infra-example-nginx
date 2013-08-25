@@ -1,7 +1,7 @@
 base:
   '*':
+    - firewall.base
     - sshd_config
-    - firewall
     - auto_update
     - users.admins
 
@@ -9,5 +9,5 @@ base:
     - firewall.salt-master
 
   'nginx01.intranet':
-    - nginx
     - firewall.http
+    - nginx
