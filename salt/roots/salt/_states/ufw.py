@@ -92,8 +92,10 @@ def allowed(name, app=None, protocol=None,
     for line in out.split('\n'):
         if line.startswith("Skipping"):
             continue
-        changes = True
-        break
+        if line.startswith("Rule added") or line.startswith("Rules updated"):
+            changes = True
+            break
+        return _error(name, line)
 
     if changes:
         return _changed(name, "{0} allowed".format(name), rule=rule)
