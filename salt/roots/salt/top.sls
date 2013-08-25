@@ -3,7 +3,7 @@ base:
     - firewall.base
     - sshd_config
     - auto_update
-    - users.admins
+    - users
 
   'salt.intranet':
     - firewall.salt-master
