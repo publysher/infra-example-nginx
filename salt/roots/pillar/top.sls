@@ -1,0 +1,6 @@
+base:
+  '*':
+    - users
+
+  'salt*':
+    - minions

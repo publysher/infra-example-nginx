@@ -28,6 +28,9 @@ Vagrant.configure("2") do |config|
   config.hostmanager.enabled = false
   config.hostmanager.include_offline = true
 
+  # DO NOT SHARE OUR ENTIRE PROJECT DIRECTORY
+  config.vm.synced_folder 'shared/', '/vagrant/'
+
   # VM-specific digital ocean config
   config.vm.provider :digital_ocean do |provider|
     provider.image = 'Debian 7.0 x64'
@@ -37,6 +40,10 @@ Vagrant.configure("2") do |config|
 
   # General provisioning #1: update host file
   config.vm.provision :hostmanager
+
+  # Install extra salt requirements
+  config.vm.provision :shell, :inline => 'apt-get -y update'
+  config.vm.provision :shell, :inline => 'apt-get -y install libpython2.7 python-augeas'
 
   # SALT is the salt master
   config.vm.define :salt do |node|
